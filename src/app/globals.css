@@ -1,0 +1,137 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Space Mono', monospace; /* Will be overridden by tailwind config, but good fallback */
+}
+
+@layer base {
+  :root {
+    --background: 40 25% 97%; /* Off-white #FAF9F6 */
+    --foreground: 0 0% 13%; /* Near Black #212121, slightly softer than pure black for better readability */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 0 0% 13%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 13%;
+    --primary: 0 0% 13%; /* Near Black for interactive elements */
+    --primary-foreground: 0 0% 100%; /* White text on primary elements */
+    --secondary: 0 0% 95%; /* Lighter gray #F2F2F2 */
+    --secondary-foreground: 0 0% 13%;
+    --muted: 0 0% 60%; /* Medium Gray #999999 for muted text */
+    --muted-foreground: 0 0% 40%; /* Darker Gray #666666 for text on muted backgrounds */
+    --accent: 0 0% 50%; /* Light Gray #808080 for accents */
+    --accent-foreground: 0 0% 100%; /* White text on accent */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 87%; /* Light Gray border #DDD */
+    --input: 0 0% 100%; /* White input background */
+    --input-border: 0 0% 80%; /* Slightly darker border for inputs #CCC */
+    --ring: 0 0% 50%; /* Accent color for focus rings */
+    
+    --chart-1: 0 0% 20%;
+    --chart-2: 0 0% 40%;
+    --chart-3: 0 0% 60%;
+    --chart-4: 0 0% 30%;
+    --chart-5: 0 0% 50%;
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 100%; /* White */
+    --sidebar-foreground: 0 0% 13%;
+    --sidebar-primary: 0 0% 13%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 95%; /* #F2F2F2 */
+    --sidebar-accent-foreground: 0 0% 13%;
+    --sidebar-border: 0 0% 87%; /* #DDD */
+    --sidebar-ring: 0 0% 50%;
+  }
+  /* No dark mode specified */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    position: relative; /* For background grain pseudo-element */
+  }
+  input, textarea, select {
+    @apply border-input-border;
+  }
+
+  /* Global subtle background grain */
+  body::before {
+    content: "";
+    position: fixed; /* Fixed to cover viewport */
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    /* SVG for subtle dots, using CSS HSL variables for color */
+    background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"%3E%3Ccircle fill="hsl(var(--foreground))" cx="1" cy="1" r="0.25"/%3E%3C/svg%3E');
+    background-size: 3px 3px; /* Adjusted for more density */
+    opacity: 0.03; /* Slightly increased opacity */
+    pointer-events: none;
+    z-index: -1; /* Place it behind all content */
+  }
+}
+
+/* Grain texture overlay for specific elements like Cards */
+.card-grain-overlay {
+  position: relative;
+  overflow: hidden; /* Important to contain the pseudo-element */
+}
+
+.card-grain-overlay::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2 2"%3E%3Ccircle fill="hsl(var(--foreground))" cx="1" cy="1" r="0.25"/%3E%3C/svg%3E');
+  background-size: 2px 2px; /* Adjusted for more density */
+  opacity: 0.04; /* Adjusted for more visibility */
+  pointer-events: none;
+  z-index: 0; /* Above card's direct background, but below its content. */
+              /* Card content (text, buttons etc.) usually has no z-index or default z-index, so this should work. */
+  border-radius: inherit; /* Inherit border-radius from parent card */
+}
+
+
+/* Login page background animation styles */
+.login-bg-animation-container {
+  @apply absolute inset-0 overflow-hidden -z-10;
+}
+
+.animated-bg-line {
+  @apply absolute bg-border opacity-20; /* Using theme border color with low opacity */
+  will-change: transform;
+}
+
+/* Vertical lines moving horizontally */
+.animated-bg-line.vertical {
+  @apply w-[1px] h-full;
+  animation: moveHorizontal 30s linear infinite;
+}
+
+/* Horizontal lines moving vertically */
+.animated-bg-line.horizontal {
+  @apply h-[1px] w-full;
+  animation: moveVertical 30s linear infinite;
+}
+
+
+@keyframes moveHorizontal {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100vw); }
+}
+
+@keyframes moveVertical {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Ensure dropdown menu content for language also gets grain if it's a card-like popover */
+[data-radix-popper-content-wrapper] > div[role="menu"],
+[data-radix-popper-content-wrapper] > div[role="listbox"] { /* Added for SelectContent */
+  @apply card-grain-overlay;
+}
